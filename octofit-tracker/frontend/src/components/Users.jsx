@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
-import { displayValue, fetchResource } from '../api'
+import { displayValue, fetchEndpoint, getItems } from '../api'
+
+const endpoint = import.meta.env.VITE_CODESPACE_NAME ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/users/` : '/api/users/'
 
 function Users() {
   const [users, setUsers] = useState([])
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetchResource('users').then(setUsers).catch((loadError) => setError(loadError.message))
+    fetchEndpoint(endpoint, 'users').then(getItems).then(setUsers).catch((loadError) => setError(loadError.message))
   }, [])
 
   return <ResourceTable title="Members" subtitle="People building momentum together" error={error} columns={['Name', 'Username', 'Email']} rows={users.map((user) => [displayValue(user.name), displayValue(user.username), displayValue(user.email)])} />
